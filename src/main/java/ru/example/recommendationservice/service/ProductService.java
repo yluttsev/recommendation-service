@@ -24,4 +24,14 @@ public class ProductService {
                 .map(productMapper::mapDocumentToDto)
                 .toList();
     }
+
+    public List<ProductDto> getTopProductsByCategories(List<Long> categoryIds, int limit) {
+        return categoryIds.stream()
+                .flatMap(categoryId -> productRepository.findByCategoryIdOrderByViewsDesc(categoryId).stream())
+                .sorted((p1, p2) -> Long.compare(p2.getViews(), p1.getViews()))
+                .limit(limit)
+                .map(productMapper::mapDocumentToDto)
+                .toList();
+    }
+
 }
