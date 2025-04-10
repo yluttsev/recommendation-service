@@ -8,8 +8,6 @@ import ru.example.recommendationservice.exception.ProductNotFoundException;
 import ru.example.recommendationservice.repository.ProductRepository;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

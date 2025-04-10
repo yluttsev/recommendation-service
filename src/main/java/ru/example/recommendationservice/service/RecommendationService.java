@@ -40,7 +40,7 @@ public class RecommendationService {
         // Фильтруем уже купленные товары при возврате
         return recommendedProducts.stream()
                 .filter(p -> !purchaseProducts.contains(p))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Long> findTopCategories(Collection<ProductDto> products) {
@@ -53,7 +53,7 @@ public class RecommendationService {
                 .sorted(Map.Entry.<Long, Long>comparingByValue().reversed())
                 .limit(TOP_LIMIT)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

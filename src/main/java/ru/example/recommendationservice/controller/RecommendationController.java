@@ -1,9 +1,7 @@
 package ru.example.recommendationservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.example.recommendationservice.document.Product;
 import ru.example.recommendationservice.dto.ProductDto;
 import ru.example.recommendationservice.service.RecommendationService;
 
