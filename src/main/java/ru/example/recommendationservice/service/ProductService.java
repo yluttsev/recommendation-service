@@ -8,6 +8,8 @@ import ru.example.recommendationservice.exception.ProductNotFoundException;
 import ru.example.recommendationservice.repository.ProductRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,4 +26,14 @@ public class ProductService {
                 .map(productMapper::mapDocumentToDto)
                 .toList();
     }
+
+    public List<ProductDto> getTopProductsByCategories(List<Long> categoryIds, int limit) {
+        return categoryIds.stream()
+                .flatMap(categoryId -> productRepository.findByCategoryIdOrderByViewsDesc(categoryId).stream())
+                .sorted((p1, p2) -> Long.compare(p2.getViews(), p1.getViews()))
+                .limit(limit)
+                .map(productMapper::mapDocumentToDto)
+                .toList();
+    }
+
 }
