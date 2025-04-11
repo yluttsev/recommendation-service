@@ -6,9 +6,16 @@ import ru.example.recommendationservice.dto.ProductDto;
 import ru.example.recommendationservice.dto.PurchaseDto;
 import ru.example.recommendationservice.feign.UserServiceClient;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Сервис для работы с рекомендациями
+ */
 @Service
 @RequiredArgsConstructor
 public class RecommendationService {
@@ -19,6 +26,14 @@ public class RecommendationService {
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final int TOP_LIMIT = 3;
 
+    /**
+     * Получение персонализированных рекомендаций для пользователя. <br>
+     * Метод получает список покупок пользователя, находит в нем топ 3 категории, которые часто покупаются. <br>
+     * Затем из каждой категории выбирает топ 3 товара с высокими просмотрами и исключает уже купленные.
+     *
+     * @param userId ID пользователя
+     * @return список {@link ProductDto DTO} рекомендованных продуктов
+     */
     public List<ProductDto> getPersonalizedRecommendationsForUserById(Long userId) {
         List<PurchaseDto> clientPurchaseHistory = userServiceClient.getPurchaseHistoryByUserId(
                 userId,
@@ -35,6 +50,12 @@ public class RecommendationService {
                 .toList();
     }
 
+    /**
+     * Получение топа категорий из списка продуктов
+     *
+     * @param products список {@link ProductDto DTO} продуктов
+     * @return список ID категорий
+     */
     private List<Long> findTopCategories(Collection<ProductDto> products) {
         return products.stream()
                 .collect(Collectors.groupingBy(

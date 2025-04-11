@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Сервис для работы с {@link Product}
+ */
 @Service
 @RequiredArgsConstructor
 public class ProductService {
@@ -26,6 +29,12 @@ public class ProductService {
     private final DiscountServiceClient discountServiceClient;
     private final UserServiceClient userServiceClient;
 
+    /**
+     * Получение продуктов по списку ID
+     *
+     * @param ids список ID продуктов
+     * @return список {@link ProductDto DTO} продуктов
+     */
     public List<ProductDto> getAllById(List<Long> ids) {
         ids.forEach(productRepository::updateProductViews);
         return ids.stream()
@@ -36,6 +45,13 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * Получение топ продуктов из категорий продуктов
+     *
+     * @param categoryIds Список ID категорий продуктов
+     * @param limit       Количество топа продуктов
+     * @return список {@link ProductDto DTO} продуктов
+     */
     public List<ProductDto> getTopProductsByCategories(List<Long> categoryIds, int limit) {
         return categoryIds.stream()
                 .flatMap(categoryId -> productRepository.findByCategoryOrderByViewsDesc(categoryId).stream())
@@ -45,6 +61,11 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * Получение продуктов с сортировкой просмотров от большего к меньшему
+     *
+     * @return список {@link ProductDto DTO} продуктов
+     */
     public List<ProductDto> getPopularProducts() {
         return productRepository.findAllByOrderByViewsDesc()
                 .stream()
@@ -52,8 +73,15 @@ public class ProductService {
                 .toList();
     }
 
+    /**
+     * Получение продуктов с максимальными скидками.<br>
+     * Метод обращается к Discount Service и считает скидку всех типов, затем сортирует от большего к меньшему
+     *
+     * @param userId ID пользователя
+     * @return список {@link ProductWithDiscountDto DTO} продуктов с максимальными скидками
+     */
     public List<ProductWithDiscountDto> getProductsWithMaxDiscount(Long userId) {
-        Long userCategory = userServiceClient.getUserById(userId).category();
+        Long userCategory = userServiceClient.getUserCategoryById(userId).category();
         List<Product> products = productRepository.findAll();
         List<ProductWithDiscountDto> productsWithDiscount = new ArrayList<>();
         products.forEach(product -> {
@@ -74,6 +102,9 @@ public class ProductService {
         return productsWithDiscount;
     }
 
+    /**
+     * Добавление тестовых продуктов в MongoDB
+     */
     @PostConstruct
     public void initTestProducts() {
         if (productRepository.count() == 0) {

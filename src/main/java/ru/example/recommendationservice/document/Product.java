@@ -13,6 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
+/**
+ * Документ продукта
+ */
 @Document(collection = "products")
 @AllArgsConstructor
 @NoArgsConstructor
