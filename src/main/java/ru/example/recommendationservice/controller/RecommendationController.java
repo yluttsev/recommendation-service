@@ -1,5 +1,10 @@
 package ru.example.recommendationservice.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/recommendations")
 @RequiredArgsConstructor
+@Tag(name = "API рекомендаций", description = "API рекомендованных продуктов")
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
@@ -30,6 +36,19 @@ public class RecommendationController {
      * @param userId ID пользователя
      * @return список {@link ProductDto DTO} продуктов
      */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение списка рекомендованных продуктов",
+                    content = @Content(schema = @Schema(implementation = ProductDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404", description = "Пользователь с данным ID не найден"
+            ),
+            @ApiResponse(
+                    responseCode = "500", description = "Внутренняя ошибка сервера"
+            )
+    })
     @GetMapping("/{userId}")
     public List<ProductDto> getRecommendations(
             @PathVariable Long userId) {
@@ -42,6 +61,19 @@ public class RecommendationController {
      * @param userId ID пользователя
      * @return список {@link ProductWithDiscountDto DTO} продуктов со скидкой
      */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение списка продуктов с максимальными скидками",
+                    content = @Content(schema = @Schema(implementation = ProductDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404", description = "Пользователь с данным ID не найден"
+            ),
+            @ApiResponse(
+                    responseCode = "500", description = "Внутренняя ошибка сервера"
+            )
+    })
     @GetMapping("/hot")
     public List<ProductWithDiscountDto> getProductsWithMaxDiscounts(@RequestParam("user_id") Long userId) {
         return productService.getProductsWithMaxDiscount(userId);
@@ -52,6 +84,16 @@ public class RecommendationController {
      *
      * @return список {@link ProductDto DTO} продуктов
      */
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное получение списка популярных продуктов",
+                    content = @Content(schema = @Schema(implementation = ProductDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500", description = "Внутренняя ошибка сервера"
+            )
+    })
     @GetMapping("/popular")
     public List<ProductDto> getPopularProducts() {
         return productService.getPopularProducts();
