@@ -1,0 +1,41 @@
+services:
+  recommendation-service-mongodb:
+    container_name: recommendation-service_mongodb
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: recommendation_service
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: >
+        sh -c '
+                  apk add --no-cache mongodb-clients || true;
+                  echo "db.runCommand({ ping: 1 }).ok" | mongo -u mongo -p mongo --quiet | grep 1
+                '
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - all-services
+  recommendation-service-app:
+    container_name: recommendation-service_app
+    image: recommendation-service:latest
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:mongo@recommendation-service_mongodb:27017/recommendation_service?authSource=admin
+      USER_SERVICE_URL: http://user-service-app:8082
+      DISCOUNT_SERVICE_URL: http://discount-service-app:8080
+      SERVER_PORT: 8081
+    depends_on:
+      recommendation-service-mongodb:
+        condition: service_healthy
+    networks:
+      - all-services
+networks:
+  all-services:
+    external: true
