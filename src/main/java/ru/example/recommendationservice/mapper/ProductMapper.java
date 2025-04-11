@@ -1,4 +1,4 @@
-package ru.example.mapper;
+package ru.example.recommendationservice.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

@@ -1,8 +1,14 @@
 package ru.example.recommendationservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.example.recommendationservice.dto.ProductDto;
+import ru.example.recommendationservice.dto.ProductWithDiscountDto;
+import ru.example.recommendationservice.service.ProductService;
 import ru.example.recommendationservice.service.RecommendationService;
 
 import java.util.List;
@@ -13,6 +19,7 @@ import java.util.List;
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
+    private final ProductService productService;
 
     @GetMapping("/{userId}")
     public List<ProductDto> getRecommendations(
@@ -20,13 +27,13 @@ public class RecommendationController {
         return recommendationService.getPersonalizedRecommendationsForUserById(userId);
     }
 
-/*
-    TODO
     @GetMapping("/hot")
-    public List<ProductDto> getPopularProducts(
-            @RequestParam(required = false, defaultValue = "10") int limit) {
-        return recommendationService.getPopularProductsByDiscount(limit);
-   }
-*/
+    public List<ProductWithDiscountDto> getProductsWithMaxDiscounts(@RequestParam("user_id") Long userId) {
+        return productService.getProductsWithMaxDiscount(userId);
+    }
 
+    @GetMapping("/popular")
+    public List<ProductDto> getPopularProducts() {
+        return productService.getPopularProducts();
+    }
 }

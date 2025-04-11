@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.example.recommendationservice.dto.ProductDto;
 import ru.example.recommendationservice.dto.PurchaseDto;
-import ru.example.recommendationservice.feign.PurchaseHistoryClient;
+import ru.example.recommendationservice.feign.UserServiceClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecommendationService {
 
-    private final PurchaseHistoryClient purchaseHistoryClient;
+    private final UserServiceClient userServiceClient;
     private final ProductService productService;
 
     private static final int DEFAULT_PAGE_SIZE = 10;
@@ -21,7 +21,7 @@ public class RecommendationService {
 
     public List<ProductDto> getPersonalizedRecommendationsForUserById(Long userId) {
         // История покупок
-        List<PurchaseDto> clientPurchaseHistory = purchaseHistoryClient.getPurchaseHistoryByUserId(
+        List<PurchaseDto> clientPurchaseHistory = userServiceClient.getPurchaseHistoryByUserId(
                 userId,
                 0,
                 DEFAULT_PAGE_SIZE

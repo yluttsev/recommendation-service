@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.example.recommendationservice.dto.PurchaseDto;
+import ru.example.recommendationservice.dto.UserCategoryDto;
 
 import java.util.List;
 
 @FeignClient(name = "user-service-client", url = "${user.service.url}")
-public interface PurchaseHistoryClient {
+public interface UserServiceClient {
 
     @GetMapping("/users/{userId}/purchases")
     List<PurchaseDto> getPurchaseHistoryByUserId(
@@ -17,4 +18,6 @@ public interface PurchaseHistoryClient {
             @RequestParam(value = "page", defaultValue = "0") int pageNumber,
             @RequestParam(value = "size", defaultValue = "10") int pageSize);
 
+    @GetMapping("/users/{userId}")
+    UserCategoryDto getUserById(@PathVariable("userId") Long userId);
 }
